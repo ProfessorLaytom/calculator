@@ -39,13 +39,16 @@ function divide(T){
 
 function changeSign(T){
     let [a, b, c] = [T[0], T[1], T[2]]
-    console.log(a, b, c)
     if (b === 0) {
-        T[0] = `-${a}`
+        T[0] = `${- +a}`
         return +T[0]
     } else {
-        T[2] = '-'
-        return T[2]
+        if (c === 0){
+            T[2] = '-'
+            return T[2]
+        } else {
+
+        }
     }
 }
 
@@ -60,6 +63,18 @@ function operate(T){
         return multiply(T)
     } else if (toDo == '/'){
         return divide(T)
+    }
+}
+
+function handleDot(T){
+    const display = document.querySelector('.display')
+    if (T[1] == 0){
+        T[0] = T[0] + '.'
+        display.textContent = T[0]
+
+    } else {
+        T[2] = T[2] + '.'
+        display.textContent = T[2]
     }
 }
 
@@ -79,21 +94,35 @@ function updateDisplay(e){
             keyHistory = [0,0,0];
             isResultDisplayed = false;
             display.textContent = 0;
+            return
         }
         if (pressed == '+/-'){
             display.textContent = changeSign(keyHistory)
             isResultDisplayed = false;
         }
-        [a, b, c] = keyHistory.map(x => typeof(x));
-        if (a == 'string' && b == 'string' && c == 'string'){ //for chaining operation, gives the result and the next operation in small
-            display.textContent = operate(keyHistory);
+        if (pressed == '.'){
+            handleDot(keyHistory)
             isResultDisplayed = false;
-            keyHistory[1] = pressed;
-            const p = document.createElement('p');
-            p.textContent = pressed
-            p.style.fontSize = '20px'
-            display.appendChild(p)
-            return
+            return;
+        }
+        [a, b, c] = keyHistory.map(x => typeof(x));
+        if (a == 'string' && b == 'string' && c == 'string' && keyHistory[2] != '-'){ //for chaining operation, 
+            //gives the result and the next operation in small.
+            //excludes the case when changing signs because a '-'
+            //string is attached in this case in keyHistory[2]
+            if (pressed != '+/-'){
+                display.textContent = operate(keyHistory);
+                isResultDisplayed = false;
+                keyHistory[1] = pressed;
+                const p = document.createElement('p');
+                p.textContent = pressed
+                p.style.fontSize = '20px'
+                display.appendChild(p)
+                return
+            } else { //case when we change the sign of the result
+                display.textContent = -operate(keyHistory);
+                return
+            }
         } else if (pressed != 'AC' && pressed != '+/-'){
             keyHistory[1] = pressed
             isResultDisplayed = false;
