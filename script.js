@@ -188,7 +188,7 @@ function updateDisplay(e){
     }  else { //if we press a number
         const displayText = display.textContent.trim()
         const displayValue = +displayText;
-        if (displayValue === 0 || isResultDisplayed){ //
+        if (isResultDisplayed){ //replaces the result by the new input number
             keyHistory[0] = pressed
             isResultDisplayed = false
             return;
