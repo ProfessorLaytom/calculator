@@ -126,9 +126,9 @@ function handleDel(T){
     }
 }
 
-function updateDisplay(e){
+function updateDisplay(div){
     const display = document.querySelector('.display')
-    const pressed = e.target.textContent
+    const pressed = div.textContent
     pressed == 'del' ? justChangedSign = false : null
     // console.log(pressed, displayValue)
     if (pressed != '.'){
@@ -211,7 +211,7 @@ function updateDisplay(e){
                 return;
             }
         } else if (keyHistory[1] === 0 && !isResultDisplayed && keyHistory[0].length < 10){ //gives us multi-decimal numbers for the first number
-            keyHistory[0] += pressed
+            keyHistory[0] == '0' ?  (pressed == '0'? null : keyHistory[0] = pressed ): keyHistory[0] += pressed
             display.textContent = keyHistory[0]
             isResultDisplayed = false
             return;
@@ -236,4 +236,14 @@ function updateDisplay(e){
 
 const buttons = Array.from(document.querySelectorAll('.button'));
 buttons.forEach(button => button.onselectstart = () => false)
-buttons.forEach(button => button.addEventListener('click', updateDisplay));
+buttons.forEach(button => button.addEventListener('click', function(e){
+    updateDisplay(e.target)
+}));
+window.addEventListener('keydown',function(e) {
+    const div = this.document.querySelector(`div[data-key="${e.keyCode}"]`)
+    console.log(e)
+    if(!div){
+        return
+    }
+    updateDisplay(div)
+})
