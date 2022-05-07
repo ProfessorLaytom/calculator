@@ -4,9 +4,11 @@ let keyHistory = [0, 0, 0]
 let isResultDisplayed = false
 // isResultDisplayed in order to know if we append new number
 // pressed or just delete it.
+let justChangedSign = false;
+/// to keep track of sign changes for the del button
 
 function adjustToLength(a){
-    return `${a}`.length > 11 ? a.toExponential(7) : a
+    return `${a}`.length > 11 ? a.toExponential(3) : a
 }
 
 function add(T){
@@ -49,11 +51,11 @@ function changeSign(T){
     let [a, b, c] = [T[0], T[1], T[2]]
     if (b === 0) {
         T[0] = `${- +a}`
-        return +T[0]
+        return adjustToLength(+T[0])
     } else {
         if (c === 0){
             T[2] = '-'
-            return T[2]
+            return adjustToLength(T[2])
         } else {
 
         }
@@ -80,30 +82,54 @@ function operate(T){
 
 function handleDot(T){
     const display = document.querySelector('.display')
-    if (T[1] == 0 && !T[0].includes('.')){
+    if (T[1] == 0 && !`${T[0]}`.includes('.')){
         T[0] = T[0] + '.'
         display.textContent = T[0]
 
-    } else if (T[1] != 0 && !T[2].includes('.')) {
+    } else if (T[1] != 0 && !`${T[2]}`.includes('.')) {
         T[2] = T[2] + '.'
         display.textContent = T[2]
     }
 }
 
+function handleDel(T){
+    const display = document.querySelector('.display')
+    if (T[1] == 0){
+        if (T[0].length>1){
+            T[0] = T[0].slice(0,-1)
+        } else {T[0] = 0}
+        display.textContent = T[0]
+    } else {
+        if (T[2] == 0){
+            T[1] = 0;
+            display.textContent = T[0]
+        }
+        else {
+            if (T[2].length > 1){
+                T[2] = T[2].slice(0,-1)
+                display.textContent = T[2]
+            } else {
+                T[2] = 0
+                display.textContent = T[1]
+            }
+            
+        }
+    }
+}
+
 function updateDisplay(e){
     const display = document.querySelector('.display')
-    const displayText = display.textContent.trim()
-    const displayValue = +displayText; //is the value BEFORE updating it
     const pressed = e.target.textContent
+    pressed == 'del' ? justChangedSign = false : null
     // console.log(pressed, displayValue)
     if (pressed != '.'){
-    //is the value AFTER updating the display
-    //we do not show the point unless said so by the handlePoint
-    //function, we do nut update the numbers above 10 digits
-        if (keyHistory[1] == 0 && `${keyHistory[0]}`.length < 10){
+        //is the value AFTER updating the display
+        //we do not show the point unless said so by the handlePoint
+        //function, we do not update the numbers above 10 digits
+        if (keyHistory[1] === 0 && `${keyHistory[0]}`.length < 10){
             display.textContent = pressed 
         }
-        if (keyHistory[1] != 0 && `${keyHistory[2]}`.length < 10){
+        if (keyHistory[1] !== 0 && `${keyHistory[2]}`.length < 10){
             display.textContent = pressed 
         }
         if (isNaN(pressed)){
@@ -134,7 +160,7 @@ function updateDisplay(e){
         }
         if (pressed == 'del'){
             handleDel(keyHistory);
-            return
+            return;
         }
         [a, b, c] = keyHistory.map(x => typeof(x));
         if (a == 'string' && b == 'string' && c == 'string' && keyHistory[2] != '-'){ //for chaining operation, 
@@ -160,6 +186,8 @@ function updateDisplay(e){
             return;
         }
     }  else { //if we press a number
+        const displayText = display.textContent.trim()
+        const displayValue = +displayText;
         if (displayValue === 0 || isResultDisplayed){ //
             keyHistory[0] = pressed
             isResultDisplayed = false
@@ -173,7 +201,7 @@ function updateDisplay(e){
                 keyHistory[0] = `${keyHistory[0]}`
                 return;
             }
-        } else if (keyHistory[1] == 0 && !isResultDisplayed && keyHistory[0].length < 10){ //gives us multi-decimal numbers for the first number
+        } else if (keyHistory[1] === 0 && !isResultDisplayed && keyHistory[0].length < 10){ //gives us multi-decimal numbers for the first number
             keyHistory[0] += pressed
             display.textContent = keyHistory[0]
             isResultDisplayed = false
