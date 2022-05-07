@@ -68,11 +68,11 @@ function operate(T){
 
 function handleDot(T){
     const display = document.querySelector('.display')
-    if (T[1] == 0){
+    if (T[1] == 0 && !T[0].includes('.')){
         T[0] = T[0] + '.'
         display.textContent = T[0]
 
-    } else {
+    } else if (T[1] != 0 && !T[2].includes('.')) {
         T[2] = T[2] + '.'
         display.textContent = T[2]
     }
@@ -84,7 +84,8 @@ function updateDisplay(e){
     const displayValue = +displayText; //is the value BEFORE updating it
     const pressed = e.target.textContent
     // console.log(pressed, displayValue)
-    display.textContent = pressed //is the value AFTER updating the display
+    pressed == '.' ? null : display.textContent = pressed //is the value AFTER updating the display
+    //we do not show the point unless said so by the handlePoint function
     if (isNaN(pressed)){ //if pressed is not a number
         if (pressed === '='){
             display.textContent = operate(keyHistory)
