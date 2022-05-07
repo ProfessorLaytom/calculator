@@ -53,16 +53,20 @@ function changeSign(T){
 }
 
 function operate(T){
-    isResultDisplayed = true
-    const toDo = T[1]
-    if (toDo == '+'){
-        return add(T)
-    }else if (toDo == '-'){
-        return subtract(T)
-    } else if (toDo == 'x'){
-        return multiply(T)
-    } else if (toDo == '/'){
-        return divide(T)
+    if (T[1] == 0){
+        return T[0]
+    }else {
+        isResultDisplayed = true
+        const toDo = T[1]
+        if (toDo == '+'){
+            return add(T)
+        }else if (toDo == '-'){
+            return subtract(T)
+        } else if (toDo == 'x'){
+            return multiply(T)
+        } else if (toDo == '/'){
+            return divide(T)
+        }
     }
 }
 
