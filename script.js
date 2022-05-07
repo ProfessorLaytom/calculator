@@ -2,37 +2,51 @@ let keyHistory = [0, 0, 0]
 /// keyHistory: first number - operation - second number, all
 /// strings except when no values are entered
 let isResultDisplayed = false
+// isResultDisplayed in order to know if we append new number
+// pressed or just delete it.
 
 function add(T){
     let [a, b] = [T[0], T[2]]
-        T[0] = `${Math.round((+a + +b)*10)/10}`
-        T[1] = 0
-        T[2] = 0
-        return +T[0]
+    T[0] = `${Math.round((+a + +b)*10)/10}`
+    T[1] = 0
+    T[2] = 0
+    return +T[0]
 }
 
 function subtract(T){
     let [a, b] = [T[0], T[2]]
-        T[0] = `${Math.round((+a - +b)*10)/10}`
-        T[1] = 0
-        T[2] = 0
-        return +T[0]
+    T[0] = `${Math.round((+a - +b)*10)/10}`
+    T[1] = 0
+    T[2] = 0
+    return +T[0]
 }
 
 function multiply(T){
     let [a, b] = [T[0], T[2]]
-        T[0] = `${Math.round((+a * +b)*10)/10}`
-        T[1] = 0
-        T[2] = 0
-        return +T[0]
+    T[0] = `${Math.round((+a * +b)*10)/10}`
+    T[1] = 0
+    T[2] = 0
+    return +T[0]
 }
 
 function divide(T){
     let [a, b] = [T[0], T[2]]
-        T[0] = `${Math.round((+a / +b)*10)/10}`
-        T[1] = 0
-        T[2] = 0
+    T[0] = `${Math.round((+a / +b)*10)/10}`
+    T[1] = 0
+    T[2] = 0
+    return +T[0]
+}
+
+function changeSign(T){
+    let [a, b, c] = [T[0], T[1], T[2]]
+    console.log(a, b, c)
+    if (b === 0) {
+        T[0] = `-${a}`
         return +T[0]
+    } else {
+        T[2] = '-'
+        return T[2]
+    }
 }
 
 function operate(T){
@@ -66,6 +80,10 @@ function updateDisplay(e){
             isResultDisplayed = false;
             display.textContent = 0;
         }
+        if (pressed == '+/-'){
+            display.textContent = changeSign(keyHistory)
+            isResultDisplayed = false;
+        }
         [a, b, c] = keyHistory.map(x => typeof(x));
         if (a == 'string' && b == 'string' && c == 'string'){ //for chaining operation, gives the result and the next operation in small
             display.textContent = operate(keyHistory);
@@ -76,7 +94,7 @@ function updateDisplay(e){
             p.style.fontSize = '20px'
             display.appendChild(p)
             return
-        } else if (pressed != 'AC'){
+        } else if (pressed != 'AC' && pressed != '+/-'){
             keyHistory[1] = pressed
             isResultDisplayed = false;
             return;
