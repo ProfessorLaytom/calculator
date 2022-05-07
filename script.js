@@ -8,8 +8,11 @@ let justChangedSign = false;
 /// to keep track of sign changes for the del button
 
 function adjustToLength(a){
+    //returns scientific form if too many digits
     return `${a}`.length > 11 ? a.toExponential(3) : a
 }
+
+//some basic operation functions, and the updates for the keyHistory
 
 function add(T){
     let [a, b] = [T[0], T[2]]
@@ -48,6 +51,9 @@ function divide(T){
 }
 
 function changeSign(T){
+    // changes the sign according to which is the last pushed
+    // button
+    
     let [a, b, c] = [T[0], T[1], T[2]]
     if (b === 0) {
         T[0] = `${- +a}`
@@ -63,7 +69,8 @@ function changeSign(T){
 }
 
 function operate(T){
-    if (T[1] == 0){ //checks if an operation is waiting, and equals gives the first number inputted
+    //checks if an operation is waiting and resolves it, and equals gives the first number inputted
+    if (T[1] == 0){ 
         return T[0]
     }else {
         isResultDisplayed = true
@@ -81,6 +88,7 @@ function operate(T){
 }
 
 function handleDot(T){
+    //handles the floating numbers, adds only one dot per number
     const display = document.querySelector('.display')
     if (T[1] == 0 && !`${T[0]}`.includes('.')){
         T[0] = T[0] + '.'
@@ -93,6 +101,7 @@ function handleDot(T){
 }
 
 function handleDel(T){
+    //handles the del button, basically removes the last digit/operator
     const display = document.querySelector('.display')
     if (T[1] == 0){
         if (T[0].length>1){
