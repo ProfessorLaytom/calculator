@@ -53,7 +53,7 @@ function changeSign(T){
 }
 
 function operate(T){
-    if (T[1] == 0){
+    if (T[1] == 0){ //checks if an operation is waiting, and equals gives the first number inputted
         return T[0]
     }else {
         isResultDisplayed = true
