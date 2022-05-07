@@ -5,36 +5,44 @@ let isResultDisplayed = false
 // isResultDisplayed in order to know if we append new number
 // pressed or just delete it.
 
+function adjustToLength(a){
+    return `${a}`.length > 11 ? a.toExponential(7) : a
+}
+
 function add(T){
     let [a, b] = [T[0], T[2]]
-    T[0] = `${Math.round((+a + +b)*10)/10}`
+    T[0] = `${+a + +b}`
     T[1] = 0
     T[2] = 0
-    return +T[0]
+    return adjustToLength(+T[0])
 }
 
 function subtract(T){
     let [a, b] = [T[0], T[2]]
-    T[0] = `${Math.round((+a - +b)*10)/10}`
+    T[0] = `${+a - +b}`
     T[1] = 0
     T[2] = 0
-    return +T[0]
+    return adjustToLength(+T[0])
 }
 
 function multiply(T){
     let [a, b] = [T[0], T[2]]
-    T[0] = `${Math.round((+a * +b)*10)/10}`
+    T[0] = `${+a * +b}`
     T[1] = 0
     T[2] = 0
-    return +T[0]
+    return adjustToLength(+T[0])
 }
 
 function divide(T){
     let [a, b] = [T[0], T[2]]
-    T[0] = `${Math.round((+a / +b)*10)/10}`
-    T[1] = 0
-    T[2] = 0
-    return +T[0]
+    if (b == 0){
+        return 'Nice try'
+    } else {
+        T[0] = `${(+a / +b)}`
+        T[1] = 0
+        T[2] = 0
+        return adjustToLength(+T[0])
+    }
 }
 
 function changeSign(T){
@@ -88,8 +96,22 @@ function updateDisplay(e){
     const displayValue = +displayText; //is the value BEFORE updating it
     const pressed = e.target.textContent
     // console.log(pressed, displayValue)
-    pressed == '.' ? null : display.textContent = pressed //is the value AFTER updating the display
-    //we do not show the point unless said so by the handlePoint function
+    if (pressed != '.'){
+    //is the value AFTER updating the display
+    //we do not show the point unless said so by the handlePoint
+    //function, we do nut update the numbers above 10 digits
+        if (keyHistory[1] == 0 && `${keyHistory[0]}`.length < 10){
+            display.textContent = pressed 
+        }
+        if (keyHistory[1] != 0 && `${keyHistory[2]}`.length < 10){
+            display.textContent = pressed 
+        }
+        if (isNaN(pressed)){
+            display.textContent = pressed 
+        }            
+        
+    }
+    
     if (isNaN(pressed)){ //if pressed is not a number
         if (pressed === '='){
             display.textContent = operate(keyHistory)
@@ -109,6 +131,10 @@ function updateDisplay(e){
             handleDot(keyHistory)
             isResultDisplayed = false;
             return;
+        }
+        if (pressed == 'del'){
+            handleDel(keyHistory);
+            return
         }
         [a, b, c] = keyHistory.map(x => typeof(x));
         if (a == 'string' && b == 'string' && c == 'string' && keyHistory[2] != '-'){ //for chaining operation, 
@@ -147,7 +173,7 @@ function updateDisplay(e){
                 keyHistory[0] = `${keyHistory[0]}`
                 return;
             }
-        } else if (keyHistory[1] == 0 && !isResultDisplayed){ //gives us multi-decimal numbers for the first number
+        } else if (keyHistory[1] == 0 && !isResultDisplayed && keyHistory[0].length < 10){ //gives us multi-decimal numbers for the first number
             keyHistory[0] += pressed
             display.textContent = keyHistory[0]
             isResultDisplayed = false
@@ -156,7 +182,7 @@ function updateDisplay(e){
             if (keyHistory[2] === 0){ //updates second number
                 keyHistory[2] = pressed
                 return;
-            } else if (!isResultDisplayed){ //gives multi-decimal if last result is not displayed
+            } else if (!isResultDisplayed && keyHistory[2].length < 10){ //gives multi-decimal if last result is not displayed
                 keyHistory[2] += pressed
                 display.textContent = keyHistory[2]
                 return;
